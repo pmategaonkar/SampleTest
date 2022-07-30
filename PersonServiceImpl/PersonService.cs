@@ -1,7 +1,10 @@
 ﻿using Domain;
+using Microsoft.Extensions.Configuration;
 using PersonService;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration.Json;
+using DataService;
 
 namespace PersonServiceImpl
 {
@@ -14,7 +17,11 @@ namespace PersonServiceImpl
 
         public IList<Person> GetAll()
         {
-            throw new NotImplementedException();
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+            IDataService srv = new DataService.DataService(configuration);
+            var perspms = srv.Fetch();
         }
     }
 }

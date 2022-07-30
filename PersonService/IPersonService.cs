@@ -1,11 +1,12 @@
 ﻿using Domain;
 using System.Collections.Generic;
 
-namespace PersonService
+namespace PersonServices
 {
     public interface IPersonService
     {
-        Person Get(int id);
-        IList<Person> GetAll();
+        string GetFullName(int id);
+        string GetFirstNamesByAge(int age);
+        IList<string> GetGenderCountGroupedByAge();
     }
 }

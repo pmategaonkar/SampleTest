@@ -1,24 +1,24 @@
 ﻿using Domain;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace DataService
 {
     public static class PersonFormatHelper
     {
-        public static IList<Person> GetPersons(string response)
+        public static IList<Person> GetPersons(string response, ILogger logger)
         {
             IList<Person> persons = null;
             try
             {
                 persons = JsonConvert.DeserializeObject<List<Person>>(response);
             }
-            catch (JsonSerializationException jsEx)
+            catch (JsonSerializationException serializationException)
             {
+                logger.LogError(serializationException,"Some error occurred while serializing the result");                
                 persons = new List<Person>();
                 var entries = Regex.Split(response, Environment.NewLine);
                 var formattedJson = string.Empty;
@@ -42,6 +42,7 @@ namespace DataService
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Some error occurred while serializing the result");
             }
             return persons;
 

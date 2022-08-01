@@ -1,6 +1,4 @@
-﻿
-using Domain;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PersonServices;
@@ -13,7 +11,8 @@ namespace PersonDetailsDisplay
         static void Main(string[] args)
         {
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json");          
+
 
             IConfiguration Configuration = builder.Build();
 
@@ -22,12 +21,16 @@ namespace PersonDetailsDisplay
             .AddScoped<DataService.IDataService, DataService.DataService>()
             .AddScoped<IPersonService, PersonService>()
             .AddMemoryCache()
+            .AddLogging(config => config.AddConsole())
             .BuildServiceProvider();
         
-            var personService = serviceProvider.GetService<IPersonService>();
+            var personService = serviceProvider.GetService<IPersonService>();            
 
-            Console.WriteLine("Id of customer to get full name");
-            var id = Console.ReadLine();
+            Console.WriteLine("The users full name for id=42");
+
+            //TODO:Remove this line if we need to get input from user.
+            //var id = Console.ReadLine();
+            var id = "42";
             if(int.TryParse(id, out int checkedId))
             {
                 Console.WriteLine(personService.GetFullName(checkedId));
@@ -37,8 +40,12 @@ namespace PersonDetailsDisplay
                 Console.WriteLine("Please enter correct id");
             }
 
-            Console.WriteLine("Age to get customers first names");
-            var age = Console.ReadLine();
+            Console.WriteLine();
+            Console.WriteLine("All the users first names who are 23");
+            //TODO: Remove this line if we need to get input from user.
+            //var age = Console.ReadLine();
+            var age = "23";
+
             if (int.TryParse(age, out int checkedAge))
             {
                 Console.WriteLine(personService.GetFirstNamesByAge(checkedAge));
@@ -48,15 +55,14 @@ namespace PersonDetailsDisplay
                 Console.WriteLine("Please enter correct id");
             }
 
+            Console.WriteLine();
+            Console.WriteLine("Gender count, grouped by age");
+            var results = personService.GetGenderCountGroupedByAge();
+            foreach(var result in results)
+            {
+                Console.WriteLine(result);
+            }
 
-            //var data = personService.GetAll();
-            //foreach (Person person in data)
-            //{
-            //    Console.WriteLine(person.Id);
-            //    Console.WriteLine(person.First + " " + person.Last);
-            //    Console.WriteLine(person.Age);
-            //    Console.WriteLine(person.Gender);
-            //}
 
             Console.ReadLine();
         }
